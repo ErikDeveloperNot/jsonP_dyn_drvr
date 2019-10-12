@@ -1,11 +1,17 @@
 #include "jsonP_parser.h"
 
 #include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <chrono>
 
 
+typedef std::chrono::high_resolution_clock clock2;
+typedef std::chrono::duration<float, std::milli> mil;
 
 void populate_object(element_object *);
 void print_object(element_object *);
+void parse_file(std::string, std::string &);
 
 int main(int argc, char **argv)
 {
@@ -24,6 +30,7 @@ int main(int argc, char **argv)
 		std::string s;
 		std::string s2;
 
+		std::cout << std::boolalpha;
 		std::cout << "Doc Type: " << doc->get_type() << std::endl;
 
 		if (doc->get_type() == object) {
@@ -63,7 +70,48 @@ int main(int argc, char **argv)
 		std::cout << "json exception caught: " << ex.what() << std::endl;
 		delete e_object;
 	}
+	
+	
+	//sample parsing json text files
+	jsonP_doc *parse_doc = nullptr;
+	element_object *parse_object = nullptr;
+		
+	try {
+		std::string json_pretty;
+		
+		{
+			std::cout << "\n\n*** opening text file ***\n";
+			std::string json;
+//			parse_file("../samples/webapp.json", json);
+			parse_file("../samples/med.json", json);
+			std::cout << "*** parsing text file with jsonP ***\n";
 
+			long l0 = clock2::now().time_since_epoch().count();
+			auto t0 = clock2::now();
+
+			jsonP_parser parser{json};
+			parse_doc = parser.parse();
+
+			long l1 = clock2::now().time_since_epoch().count();
+			auto t1 = clock2::now();
+			std::cout << "DONE parsing, elapsed time: " << (l1-l0) << ", " << mil(t1-t0).count() << "ms\n";
+		}
+		
+		parse_object = parse_doc->get_object();
+		std::cout << "*** calling pretty stringify ***\n";
+		parse_object->stringify_pretty(json_pretty);
+		
+		delete parse_doc;
+		delete parse_object;
+		
+		std::cout << "*** contents of json ***\n";
+		std::cout << json_pretty << std::endl;
+	} catch (jsonP_exception &ex) {
+		std::cout << "Parse exception parsing text file: " << ex.what() << std::endl;
+		delete parse_doc;
+		delete parse_object;
+	}
+ 
 	return 0;
 }
 
@@ -129,4 +177,21 @@ void print_object(element_object *doc)
 		std::cout << "sub3: " << obj->get_as_boolean("sub3") << std::endl;
 	
 	} catch (const char *error) { std::cout << "Error: " << error << std::endl; }
+}
+
+
+void parse_file(std::string f, std::string &json)
+{
+	std::ifstream in_file{f};
+	std::string line;
+	
+	if (!in_file) {
+		std::cerr << "File failed to open" << std::endl;
+		return;
+	}
+	
+	while (std::getline(in_file, line))
+		json += line;
+	
+	std::cout << f << ", file size: " << json.length() << std::endl;
 }
