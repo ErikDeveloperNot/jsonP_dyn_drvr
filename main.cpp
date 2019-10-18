@@ -1,5 +1,6 @@
 //#include "jsonP_parser.h"
 #include "jsonP_buffer_parser.h"
+#include "net_chunk_impl.h"
 
 #include <iostream>
 #include <iomanip>
@@ -118,20 +119,36 @@ int main(int argc, char **argv)
 
 	// sample parsing json file using the buffer parser
 //	jsonP_buffer_parser buf_parser{"/Users/user1/Downloads/large.json", 8192};
-	jsonP_buffer_parser buf_parser{"//Users/user1/udemy/CPP/UdemyCPP/jsonP_dyn_drvr/samples/webapp.json", 1000};
-	auto buf_t0 = clock2::now();
-	jsonP_doc *doc_buf = buf_parser.parse();
-	auto buf_t1 = clock2::now();
-	std::string buf_s;
-	element_object *buf_obj = doc_buf->get_object();
-	buf_obj->stringify_pretty(buf_s);
-	std::cout << "\n\n" << doc_buf->get_type() << "\n\n";
-	std::cout << buf_s << std::endl;
-
-	std::cout << "buffer parser parse time: " << mil(buf_t1-buf_t0).count() << "/ms" << std::endl;
+//	jsonP_buffer_parser buf_parser{"//Users/user1/udemy/CPP/UdemyCPP/jsonP_dyn_drvr/samples/webapp.json", 1000};
+//	auto buf_t0 = clock2::now();
+//	jsonP_doc *doc_buf = buf_parser.parse();
+//	auto buf_t1 = clock2::now();
+//	std::string buf_s;
+//	element_object *buf_obj = doc_buf->get_object();
+//	buf_obj->stringify_pretty(buf_s);
+//	std::cout << "\n\n" << doc_buf->get_type() << "\n\n";
+//	std::cout << buf_s << std::endl;
+//
+//	std::cout << "buffer parser parse time: " << mil(buf_t1-buf_t0).count() << "/ms" << std::endl;
+//	
+//	delete buf_obj;
+//	delete doc_buf;
 	
-	delete buf_obj;
-	delete doc_buf;
+	
+	// sample streaming json from net by implementing a custom IChunk_reader interface and supplying it to the buffer parser
+	net_chunk_impl *net_reader = new net_chunk_impl{};
+	jsonP_buffer_parser net_buf_parser{net_reader, 1024};
+	jsonP_doc *doc_net_buf = net_buf_parser.parse();
+	std::string net_buf_s;
+	element_object *net_buf_obj = doc_net_buf->get_object();
+	net_buf_obj->stringify_pretty(net_buf_s);
+	std::cout << "\n\n" << doc_net_buf->get_type() << "\n\n";
+	std::cout << net_buf_s << std::endl;
+	
+//	delete net_reader;
+	delete net_buf_obj;
+	delete doc_net_buf;
+
  
 	return 0;
 }

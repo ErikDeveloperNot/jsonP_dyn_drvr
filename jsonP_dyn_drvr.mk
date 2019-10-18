@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=User One
-Date                   :=16/10/2019
+Date                   :=17/10/2019
 CodeLitePath           :="/Users/user1/Library/Application Support/CodeLite"
 LinkerName             :=/usr/bin/clang++
 SharedObjectLinkerName :=/usr/bin/clang++ -dynamiclib -fPIC
@@ -60,7 +60,7 @@ AS       := /usr/bin/as
 ## User defined environment variables
 ##
 CodeLiteDir:=/Applications/codelite.app/Contents/SharedSupport/
-Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/net_chunk_impl.cpp$(ObjectSuffix) 
 
 
 
@@ -98,6 +98,14 @@ $(IntermediateDirectory)/main.cpp$(DependSuffix): main.cpp
 
 $(IntermediateDirectory)/main.cpp$(PreprocessSuffix): main.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/main.cpp$(PreprocessSuffix) main.cpp
+
+$(IntermediateDirectory)/net_chunk_impl.cpp$(ObjectSuffix): net_chunk_impl.cpp $(IntermediateDirectory)/net_chunk_impl.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/Users/user1/udemy/CPP/UdemyCPP/jsonP_dyn_drvr/net_chunk_impl.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/net_chunk_impl.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/net_chunk_impl.cpp$(DependSuffix): net_chunk_impl.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/net_chunk_impl.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/net_chunk_impl.cpp$(DependSuffix) -MM net_chunk_impl.cpp
+
+$(IntermediateDirectory)/net_chunk_impl.cpp$(PreprocessSuffix): net_chunk_impl.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/net_chunk_impl.cpp$(PreprocessSuffix) net_chunk_impl.cpp
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
