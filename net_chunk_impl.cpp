@@ -37,7 +37,7 @@ int net_chunk_impl::get_next(char* buf, int cnt)
 	
 	rec = recv(soc_fd, buf, cnt, 0);
 
-	std::cout << "net_chunk_impl received " << rec << " bytes, feeding to the buffer parser\n"; // << buf << std::endl;	
+//	std::cout << "net_chunk_impl received " << rec << " bytes, feeding to the buffer parser\n" << buf << std::endl;	
 
 // bad workaround - not sure why these so up it the stream sometimes
 bool b1{false};

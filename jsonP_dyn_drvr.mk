@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=User One
-Date                   :=24/10/2019
+Date                   :=31/12/2019
 CodeLitePath           :="/Users/user1/Library/Application Support/CodeLite"
 LinkerName             :=/usr/bin/clang++
 SharedObjectLinkerName :=/usr/bin/clang++ -dynamiclib -fPIC
@@ -36,7 +36,7 @@ ObjectsFileList        :="jsonP_dyn_drvr.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=mkdir -p
 LinkOptions            :=  
-IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)/Users/user1/udemy/CPP/UdemyCPP/jsonP_dyn 
+IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)/Users/user1/udemy/CPP/UdemyCPP/jsonP_dyn $(IncludeSwitch)/Users/user1/Git/sajson/include 
 IncludePCH             := 
 RcIncludePath          := 
 Libs                   := $(LibrarySwitch)jsonP_dyn 
@@ -50,8 +50,8 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)/Users/user1
 AR       := /usr/bin/ar rcu
 CXX      := /usr/bin/clang++
 CC       := /usr/bin/clang
-CXXFLAGS :=  -g -O0 -std=c++11 $(Preprocessors)
-CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
+CXXFLAGS :=  -g -O3 -std=c++11 $(Preprocessors)
+CFLAGS   :=  -g -O3 $(Preprocessors)
 ASFLAGS  := 
 AS       := /usr/bin/as
 

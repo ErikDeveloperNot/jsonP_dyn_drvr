@@ -12,6 +12,8 @@
     <File Name="net_chunk_impl.h"/>
     <File Name="main.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -23,9 +25,10 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="clang( clang-902.0.39.2 )" DebuggerType="LLDB Debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-std=c++11" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-O3;-std=c++11" C_Options="-g;-O3" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="/Users/user1/udemy/CPP/UdemyCPP/jsonP_dyn"/>
+        <IncludePath Value="/Users/user1/Git/sajson/include"/>
       </Compiler>
       <Linker Options="" Required="yes">
         <LibraryPath Value="/Users/user1/udemy/CPP/UdemyCPP/jsonP_dyn/Debug"/>
