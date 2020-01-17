@@ -3,7 +3,6 @@
 #include "jsonP_push_parser.h"
 #include "net_chunk_impl.h"
 //#include "IPush_handler.h"
-#include "modified_json_push_handler_impl.h"
 
 #include <iostream>
 #include <iomanip>
@@ -34,7 +33,7 @@ char * parse_file(std::string, std::string &);
 int main(int argc, char **argv)
 {
 
-	
+//for (size_t ii=0; ii<1000; ii++) {
 	//sample of creating json object and accessing its elements
 	std::cout << "\n\n**********************************************************\n";
 	std::cout << "sample of creating json object and accessing its elements...\n";
@@ -56,9 +55,13 @@ int main(int argc, char **argv)
 			std::cout << "**** ERROR building search path *****" << std::endl;
 		}
 
-		std::cout << "\n ---- Deleting ---- \n";
+		char a_3[] = {"/new_obj_key/new_obj_key_embed/3"};
+		char a_e[] = {"/new_obj_key/new_obj_key_embed"};
+		char delim[] = {"/"};
 
-		if (json->delete_value(paths, 3, NULL, &err) != 0) {
+		std::cout << "\n ---- Deleting ---- \n";
+//		if (json->delete_value(paths, 3, NULL, &err) != 0) {
+		if (json->delete_value(a_3, delim, NULL, &err) != 0) {
 			std::cout << "**** ERROR deleting, error code: " << err << std::endl;
 		} else {
 			pretty_json = json->stringify_pretty();
@@ -72,14 +75,15 @@ int main(int argc, char **argv)
 			std::cout << "**** ERROR building search path *****" << std::endl;
 		}
 		\
-		unsigned int member_cnt = json->get_elements_count(paths, 2);
+		unsigned int member_cnt = json->get_members_count(paths, 2);
 		std::cout << "\nmembers count: " << member_cnt << std::endl;
+		std::cout << "members count: " << json->get_members_count(a_e, delim) << std::endl;
 
 		//sample getting object keys using the object_id
 		object_id test_id = json->get_object_id(paths, 1);
 		struct object_key *obj_keys;
 		unsigned int k_cnt = json->get_keys(test_id, obj_keys);
-		std::cout << "Number of Keys: " << k_cnt << std::endl;
+		std::cout << "\nNumber of Keys: " << k_cnt << std::endl;
 		
 		for (unsigned int i=0; i<k_cnt; i++) {
 			std::cout << "type: " << obj_keys[i].type << ", key: " << obj_keys[i].key << std::endl;
@@ -88,7 +92,9 @@ int main(int argc, char **argv)
 		free(obj_keys);
 
 		//sample getting object keys using search_path_element
-//		k_cnt = json->get_keys(paths, 1, obj_keys);
+//		k_cnt = json->get_keys(paths, 1, obj_keys);					//search_path_element
+		char p_k[] = {"/new_obj_key"};									//char * path
+//		k_cnt = json->get_keys(p_k, delim, obj_keys);
 //		std::cout << "Number of Keys: " << k_cnt << std::endl;
 //
 //		for (unsigned int i=0; i<k_cnt; i++) {
@@ -100,10 +106,12 @@ int main(int argc, char **argv)
 		//print contents of array using get_next_array_element. the first call takes an object_id or search_path_element
 		// each call after takes 0 instead of the object_id. An empty element_type is returned when no more elements
 		char p5[] = {"O-string_array\0"};
+		char p_a[] = {"/string_array"};
 		json->build_search_path(p5, delim3, paths);
 		const void *v;
 
-		element_type t_arry = json->get_next_array_element(paths, 1, v);
+//		element_type t_arry = json->get_next_array_element(paths, 1, v);
+		element_type t_arry = json->get_next_array_element(p_a, delim, v);
 		std::cout << "\nType returned: " << get_element_type_string(t_arry) << std::endl;
 		std::cout << "Value returned: " << (char*)v << std::endl;
 		t_arry = json->get_next_array_element(0, v);
@@ -111,7 +119,7 @@ int main(int argc, char **argv)
 		std::cout << "Value returned: " << std::endl;
 		t_arry = json->get_next_array_element(0, v);
 		std::cout << "Type returned: " << get_element_type_string(t_arry) << std::endl;
-		std::cout << "Value returned: " << *(long*)v << std::endl;
+		std::cout << "Value returned: " << *(const long*)v << std::endl;
 		t_arry = json->get_next_array_element(0, v);
 		std::cout << "Type returned: " << get_element_type_string(t_arry) << std::endl;
 		std::cout << "Value returned: " << *(double*)v << std::endl;
@@ -128,33 +136,23 @@ int main(int argc, char **argv)
 		t_arry = json->get_next_array_element(0, v);
 		std::cout << "Type returned: " << get_element_type_string(t_arry) << std::endl;
 		
-		char new_obj_key[] = {"new_obj_key\0"};
-		char double_key[] = {"double_key\0"};
-		char long_key[] = {"long_key\0"};
-		char bool_t_key[] = {"bool_t_key\0"};
-		char NEW_KEY[] = {"NEW_KEY\0"};
-		
-		paths[0].type = object_key;
-		paths[0].key = new_obj_key;
+		char double_key[] = {"/new_obj_key/double_key"};
+		char long_key[] = {"/new_obj_key/long_key"};
+		char bool_t_key[] = {"/new_obj_key/bool_t_key"};
+		char NEW_KEY[] = {"/new_obj_key/NEW_KEY"};
 		
 		//get simple value types
-		paths[1].type = object_key;
-		paths[1].key = double_key;
-		std::cout << "\ndouble value: " << json->get_double_value(paths, 2, &err) << std::endl; 
-		paths[1].type = object_key;
-		paths[1].key = long_key;
-		std::cout << "long value: " << json->get_long_value(paths, 2, &err) << std::endl;
-		paths[1].type = object_key;
-		paths[1].key = bool_t_key;
-		std::cout << "bool value: " << json->get_bool_value(paths, 2, &err) << std::endl; 
-		paths[1].type = object_key;
-		paths[1].key = NEW_KEY;
-		std::cout << "string value: " << json->get_string_value(paths, 2, &err) << std::endl; 
+		std::cout << "\ndouble value: " << json->get_double_value(double_key, delim, &err) << std::endl; 
+		std::cout << "long value: " << json->get_long_value(long_key, delim, &err) << std::endl;
+		std::cout << "bool value: " << json->get_bool_value(bool_t_key, delim, &err) << std::endl; 
+		std::cout << "string value: " << json->get_string_value(NEW_KEY, delim, &err) << std::endl; 
 		
 		//update value
 		char string_v[] = {"new string value\0"};
-		json->update_value(paths, 2, string, string_v);
-		std::cout << "updated string value: " << json->get_string_value(paths, 2, &err) << std::endl; 
+		char path_to_update[] = {"/new_obj_key/NEW_KEY"};
+//		json->update_value(paths, 2, string, string_v);
+		json->update_value(path_to_update, delim, string, string_v);
+		std::cout << "updated string value: " << json->get_string_value(path_to_update, delim, &err) << std::endl; 
 		
 		delete json;
 	} catch (jsonP_exception &ex) {
@@ -170,17 +168,16 @@ int main(int argc, char **argv)
 	jsonP_json *parse_doc = nullptr;
 
 	try {
-		std::string json_pretty;
 		std::cout << "\n*** opening text file ***\n";
 		std::string json;
 //			char *json2 = parse_file("/Users/user1/Downloads/large.json", json);
 //			char *json2 = parse_file("../samples/webapp2.json", json);
-		char *json2 = parse_file("../samples/sample1.json.t", json);
-//			char *json2 = parse_file("../samples/med.json", json);
+//		char *json2 = parse_file("../samples/sample1.json.t", json);
+			char *json2 = parse_file("../samples/med.json", json);
 		std::cout << "*** parsing text file with jsonP ***\n" << std::endl;
 		auto t0 = clock2::now();
 
-		jsonP_parser parser{json2, (unsigned int)strlen(json2), /*DONT_SORT_KEYS*/};
+		jsonP_parser parser{json2, (unsigned int)strlen(json2), /*PRESERVE_JSON*/};
 		parse_doc = parser.parse();
 		auto t1 = clock2::now();
 
@@ -192,13 +189,13 @@ int main(int argc, char **argv)
 		char *stringify = parse_doc->stringify();		
 		t1 = clock2::now();
 		std::cout << "\nDONE stringify, elapsed time: " << mil(t1-t0).count() << "ms\n" << std::endl;
-		std::cout << stringify << std::endl;
+//		std::cout << stringify << std::endl;
 		free(stringify);
 		t0 = clock2::now();
 		char *stringify_pretty = parse_doc->stringify_pretty();		
 		t1 = clock2::now();
 		std::cout << "\nDONE stringify_pretty, elapsed time: " << mil(t1-t0).count() << "ms\n" << std::endl;
-		std::cout << stringify_pretty << std::endl;
+//		std::cout << stringify_pretty << std::endl;
 		free(stringify_pretty);
 
 		std::cout << "After adding a new element to the parsed json\n";
@@ -207,7 +204,7 @@ int main(int argc, char **argv)
 		char val_[] = {"This is the new value added to a parsed document\0"};
 		parse_doc->add_value_type(string, id_, key_, val_);
 		stringify_pretty = parse_doc->stringify_pretty();
-		std::cout << stringify_pretty << std::endl;
+//		std::cout << stringify_pretty << std::endl;
 		free(stringify_pretty);
 		
 		delete parse_doc;
@@ -215,8 +212,6 @@ int main(int argc, char **argv)
 		std::cout << "Parse exception parsing text file: " << ex.what() << std::endl;
 		delete parse_doc;
 	}
-
-
 
 	// sample parsing json file using the buffer parser
 	std::cout << "\n\n**********************************************************\n";
@@ -228,13 +223,12 @@ int main(int argc, char **argv)
 	auto buf_t1 = clock2::now();
 	std::cout << "buffer parser parse time: " << mil(buf_t1-buf_t0).count() << "/ms" << std::endl;
 	char *stringify_pretty = doc_buf->stringify_pretty();
-	std::cout << "json:\n" << stringify_pretty << std::endl;
+//	std::cout << "json:\n" << stringify_pretty << std::endl;
 	free(stringify_pretty);
-	
+
 	delete buf_parser;
 	delete doc_buf;
-	
-	
+
 
 	// sample streaming json from the net by implementing a custom IChunk_reader interface and supplying it to the buffer parser
 //	net_chunk_impl *net_reader = nullptr;
@@ -261,42 +255,8 @@ int main(int argc, char **argv)
 //		delete net_buf_parser;
 //	
 //	}
+//for (size_t i=0; i<100000; i++) {
 
-
-//	 //sample streaming json from the net by implementing a custom IChunk_reader interface and supplying it to the buffer parser
-//	 //and using a push handler to create a compact json object of only keys being looked for
-//	modified_json_push_handler_impl *handler_net_push = nullptr;
-//	element *net_push_handler_element = nullptr;
-//	jsonP_push_parser *net_push_parser = nullptr;
-//	
-//	try {
-//		std::cout << "\n**********************************************************\n\n";
-//		std::cout << "Starting buffer_parser test with IChunk_reader implementation net_chunk_impl and the the modified_json_push_handler_impl\n";
-//		net_chunk_impl *net_reader2 = new net_chunk_impl{};
-//		handler_net_push = new modified_json_push_handler_impl{object};
-//		handler_net_push->add_key("/meta/view", "metadata");
-//		net_push_parser = new jsonP_push_parser{net_reader2, handler_net_push, 8192};
-//		net_push_parser->parse();
-//		net_push_handler_element = handler_net_push->get_modified_json();
-//		std::string net_push_handler_s;
-//		net_push_handler_element->stringify_pretty(net_push_handler_s);
-//		std::cout << "\n*** Modified Json ***\n" << net_push_handler_s << std::endl;
-//		
-//		delete net_push_handler_element;
-//		delete handler_net_push;
-//		delete net_push_parser;
-//		/* jsonP_push_parser owns the IChunk_reader instance, and it will delete it when the parser is deleted */
-//	
-//	} catch (jsonP_exception &ex) {
-//		std::cout << "Parse exception: " << ex.what() << std::endl;
-//		
-//		delete net_push_handler_element;
-//		delete handler_net_push;
-//		delete net_push_parser;
-//	}
-//
-//
-//
 	// sample using the IPush_handler implementation test_push_handler
 	std::cout << "\n**********************************************************\n\n";
 	std::cout << "Starting push_parser test with IPush_handler implementation test_push_handler\n";
@@ -310,31 +270,7 @@ int main(int argc, char **argv)
 	std::cout << "Done Parsing with push_parser, parse time: " << mil(push_buf_t1-push_buf_t0).count() << "/ms" << std::endl;
 	delete push_parser;
 	delete handler;
-
-//
-//
-//	// sample using the IPush_handler implementation modified_json_push_handler_impl
-//	std::cout << "\n**********************************************************\n\n";
-//	std::cout << "Starting push_parser test with the modified_json_push_handler_impl\n";
-//	modified_json_push_handler_impl *handler2 = new modified_json_push_handler_impl{object};
-////	handler2->add_key("/glossary/GlossDiv/GlossList/GlossEntry", "GlossDef");
-////	handler2->add_key("glossary/GlossDiv/", "title");
-//	handler2->add_key("/meta/view", "tableAuthor");
-//	handler2->add_key("/meta/view/query", "orderBys");
-//	handler2->debug_key_map();
-//	jsonP_push_parser *push_parser2 = new jsonP_push_parser{"../samples/sample5.json", handler2};
-//	auto push_buf2_t0 = clock2::now();
-//	push_parser2->parse();
-//	auto push_buf2_t1 = clock2::now();
-//	std::cout << "Done Parsing with push_parser, parse time: " << mil(push_buf2_t1-push_buf2_t0).count() << "/ms" << std::endl;
-//	element *push_handler_element = handler2->get_modified_json();
-//	std::string push_handler_s;
-//	push_handler_element->stringify_pretty(push_handler_s);
-//	std::cout << "\n" << push_handler_s << std::endl;
-//	
-//	delete push_handler_element;
-//	delete handler2;
-//	delete push_parser2;
+//}
  
 	return 0;
 }
