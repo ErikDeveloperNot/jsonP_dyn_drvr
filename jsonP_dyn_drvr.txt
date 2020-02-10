@@ -1,1 +1,1 @@
-./Debug/main.cpp.o ./Debug/net_chunk_impl.cpp.o
+./Debug/main_all.cpp.o ./Debug/main.cpp.o ./Debug/JSON.cpp.o ./Debug/net_chunk_impl.cpp.o ./Debug/JSONValue.cpp.o ./Debug/cJSON.c.o

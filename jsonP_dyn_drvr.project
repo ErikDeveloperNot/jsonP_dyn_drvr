@@ -8,6 +8,10 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="main_all.cpp"/>
+    <File Name="cJSON.c"/>
+    <File Name="JSONValue.cpp"/>
+    <File Name="JSON.cpp"/>
     <File Name="net_chunk_impl.cpp"/>
     <File Name="net_chunk_impl.h"/>
     <File Name="main.cpp"/>
@@ -25,10 +29,13 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="clang( clang-902.0.39.2 )" DebuggerType="LLDB Debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-std=c++11" C_Options="-g;-O0" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-O3;-std=c++11" C_Options="-g;-O3" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="/Users/user1/udemy/CPP/UdemyCPP/jsonP_dyn"/>
         <IncludePath Value="/Users/user1/Git/sajson/include"/>
+        <IncludePath Value="/Users/user1/Git/SimpleJSON/src"/>
+        <IncludePath Value="/Users/user1/Git/cJSON"/>
+        <IncludePath Value="/Users/user1/Git/rapidjson/include"/>
       </Compiler>
       <Linker Options="" Required="yes">
         <LibraryPath Value="/Users/user1/udemy/CPP/UdemyCPP/jsonP_dyn/Debug"/>
